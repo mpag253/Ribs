@@ -4,10 +4,6 @@ import sparse
 import pickle as pkl
 import pandas as pd
 
-import skimage
-import skimage.measure
-from scipy import ndimage
-
 
 def run_ribs_allocation(input_info, root, path_nifti, save_masks=True, troubleshooting_images=[False, False]):
     """ Main script to ...
@@ -16,9 +12,10 @@ def run_ribs_allocation(input_info, root, path_nifti, save_masks=True, troublesh
     [cohort, subject, condition, path_dicom] = input_info
 
     # Load the rib labels matrix
-    ribs_image = load_sparse('Rib_Labels/rib_labels_'+subject+'_'+condition+'.pkl')
+    ribs_image = load_sparse('Rib_Labels/ribs_segmented_'+subject+'_'+condition+'.pkl')
     
     # Plot for allocation
+    print("Plotting... "+subject)
     plot_labelled_image(ribs_image)
     
 
@@ -71,7 +68,7 @@ def load_sparse(fname):
 root = "/hpc/mpag253/Ribs/segmentation"
 path_nifti = "/hpc/mpag253/Torso/segmentation"
 #paths = [dicom_path, root, ]
-input_list = np.array(pd.read_excel("/hpc/mpag253/Torso/torso_checklist.xlsx", skiprows=0, usecols=range(5)))
+input_list = np.array(pd.read_excel("/hpc/mpag253/Ribs/ribs_checklist.xlsx", skiprows=0, usecols=range(5)))
 
 #############################################################################################################
 

@@ -59,7 +59,7 @@ def run_ribs_segmentation(input_info, root, path_nifti, save_results=True, troub
     
     # Setup
     [cohort, subject, condition, path_dicom] = input_info
-    print("\tRunning torso segmentation...\t", subject, end="\r")
+    print("\tRunning ribs segmentation...\t", subject, end="\r")
     threshold_cort = 300     # Threshold for cortical bone  
     threshold_lung = -320    # Threshold for lung
 
@@ -95,9 +95,9 @@ def run_ribs_segmentation(input_info, root, path_nifti, save_results=True, troub
             ribs_image = generate_ribs_centroids(image, threshold_lung, threshold_cort, gen_images=troubleshooting_images)        
             # Save rib labels image to file
             if save_results:
-                save_as_sparse(ribs_image, 'Rib_Labels/rib_labels_'+subject+'_'+condition+'.pkl')
+                save_as_sparse(ribs_image, 'Rib_Labels/ribs_segmented_'+subject+'_'+condition+'.pkl')
 
-            print("\tRunning torso segmentation...\t", subject, "\tDone.")
+            print("\tRunning ribs segmentation...\t", subject, "\tDone.")
 
 
 def image_filter(image, intensity=0):
@@ -247,8 +247,18 @@ def largest_label_n_volumes(im, n_vols=2, bg=-1):
     vals, counts = np.unique(im, return_counts=True)
     counts = counts[vals != bg]
     vals = vals[vals != bg]
-    if len(counts) > 0:
-        return vals[np.argpartition(counts, -n_vols)[-n_vols:]]
+    #print(n_vols)
+    #print(len(counts))
+    n_cnts = len(counts)
+    if n_cnts > 0:
+        if n_cnts < n_vols:                                              # mod
+            if n_cnts == 1:                                              # mod
+                #print(counts)
+                return vals                                              # mod
+            else:                                                        # mod
+                return vals[np.argpartition(counts, -n_vols)[-n_cnts:]]  # mod
+        else:                                                            # mode
+            return vals[np.argpartition(counts, -n_vols)[-n_vols:]]      # original
     else:
         return None
         
@@ -343,23 +353,30 @@ def generate_lung_measures(lung_image):
     """ Get lung centre and span (both in pixels) from a binary image of the lungs.
     """
     indices = np.nonzero(lung_image)
-    lungs_span = [[min(indices[1]), max(indices[1])], [min(indices[2]), max(indices[2])]]
-    print(lungs_span)
-    lungs_centre = [int(np.mean(lungs_span[0])), int(np.mean(lungs_span[1]))]
+    mins = np.min(indices, axis=1)
+    maxs = np.max(indices, axis=1)
+    lungs_span = maxs-mins
+    lungs_centre = ((maxs+mins)/2).astype(int)
     return lungs_centre, lungs_span
 
 
 ###
-def generate_rib_region(lung_image):
+def generate_rib_region(lung_image, lungs_span):
     """ Generates a binary image that specifies the valid region for ribs in the 3D image.
         Specifically, this method uses proximity to the lungs to define the rib region. 
     """
        
+    #Inputs
+    # number of pixels for the proximity region outisde the lungs (independently)
+    size_dilation = int(30/624*lungs_span[0]) #30/624 - optimised + generalised from AGING001   
+    # number of pixels for the proximity region inside the convex hull of both lungs
+    size_erosion = int(60/624*lungs_span[0])  #60/624 - optimised + generalised from AGING001
+    #print(size_dilation, size_erosion)
+    dilated_lung = ndimage.binary_dilation(lung_image, iterations=size_dilation).astype(lung_image.dtype)
+    
+    # Generate rib region
     # Only keep the bone label if the centroid is in proximity of the lungs
     # + Eroded convex hull of the lungs to remove interior
-    size_dilation = 30    # number of pixels for the proximity region outisde the lungs (independently)
-    size_erosion = 60     # number of pixels for the proximity region inside the convex hull of both lungs
-    dilated_lung = ndimage.binary_dilation(lung_image, iterations=size_dilation).astype(lung_image.dtype)
     lung_cvhull = np.zeros(np.shape(lung_image))
     for i, axial_slice in enumerate(lung_image):
         lung_cvhull[i, :, :] = skimage.morphology.convex_hull_image(lung_image[i, :, :])
@@ -479,19 +496,17 @@ def segment_ribs(image, rib_region, threshold=600, gen_images=[False, False]):
 ###   
 def generate_ribs_centroids(image, threshold_lung, threshold_cort, gen_images=[False, False]):
   
-    # Generate lung segmentation
-    tic(text='Started segmentation:')
+    # Generate lung segmentation and extract measures of the lung
+    tic()
     lung_image = segment_lungs(image, threshold=threshold_lung, gen_images=gen_images)     
-    #toc(text="Lung image:")
-            
-    # Generate rib region
-    # switch axes to enumerate axial slices easily
-    lung_image = np.moveaxis(lung_image, -1, 0)
-    # generate the rib region image
-    rib_region = generate_rib_region(lung_image)
-    rib_region = np.moveaxis(rib_region, 0, -1) # revert axes
     # generate measures from the lung image
     lungs_centre, lungs_span = generate_lung_measures(lung_image)
+    #toc(text="Lung image + measures:")
+            
+    # Generate the rib region image
+    lung_image = np.moveaxis(lung_image, -1, 0)     # switch axes to enumerate axial slices easily
+    rib_region = generate_rib_region(lung_image, lungs_span)
+    rib_region = np.moveaxis(rib_region, 0, -1) # revert axes to original
     #toc(text="Rib region:")
     
     # Generate POSTERIOR section: transverse slices
@@ -500,25 +515,25 @@ def generate_ribs_centroids(image, threshold_lung, threshold_cort, gen_images=[F
     #toc(text="Anterior image:")
 
     ## Generate ANTERIOR section: axial OR coronal slices
-    slice_direction = 'a'
+    slice_direction = 'c'
     if slice_direction in ['c', 'coronal']:
         image = np.moveaxis(image, 0, 2) # switch axes to enumerate easily (ORIGINAL -> CORONAL)
         rib_region = np.moveaxis(rib_region, 0, 2) # switch axes to enumerate easily (ORIGINAL -> CORONAL)
         image_anterior = segment_ribs(image, rib_region, threshold=threshold_cort, gen_images=gen_images)  
-        image_anterior = np.moveaxis(image_anterior, 2, 0) # switch axes to enumerate easily (CORONAL -> ORIGINAL)
+        image_anterior = np.moveaxis(image_anterior, 2, 0) # revert axes (CORONAL -> ORIGINAL)
     elif slice_direction in ['a', 'axial']:
         image = np.moveaxis(image, 2, 0) # switch axes to enumerate easily (ORIGINAL -> AXIAL)
         rib_region = np.moveaxis(rib_region, 2, 0) # switch axes to enumerate easily (ORIGINAL -> AXIAL)
         image_anterior = segment_ribs(image, rib_region, threshold=threshold_cort, gen_images=gen_images)  
-        image_anterior = np.moveaxis(image_anterior, 0, 2) # switch axes to enumerate easily (AXIAL -> ORIGINAL)   
+        image_anterior = np.moveaxis(image_anterior, 0, 2) # revert axes (AXIAL -> ORIGINAL)   
     #toc(text="Posterior image:")
     
     # Eliminate angular regions from anterior and posterior sections and merge
     # eliminate
     image_posterior = np.moveaxis(image_posterior, -1, 0) # switch axes to enumerate easily (ORIGINAL -> AXIAL)
     image_anterior = np.moveaxis(image_anterior, -1, 0) # switch axes to enumerate easily (ORIGINAL -> AXIAL)
-    image_posterior = eliminate_points_by_theta(image_posterior, [[-1.1*np.pi, -0.66*np.pi], [0.66*np.pi, 1.1*np.pi]], lungs_centre, bg=0)
-    image_anterior = eliminate_points_by_theta(image_anterior, [[-0.66*np.pi, 0.66*np.pi],], lungs_centre, bg=0)
+    image_posterior = eliminate_points_by_theta(image_posterior, [[-1.1*np.pi, -0.66*np.pi], [0.66*np.pi, 1.1*np.pi]], lungs_centre[:2], bg=0)
+    image_anterior = eliminate_points_by_theta(image_anterior, [[-0.66*np.pi, 0.66*np.pi],], lungs_centre[:2], bg=0)
     # merge
     binary_image = image_anterior + image_posterior
     binary_image = np.moveaxis(binary_image, 0, -1)
@@ -526,7 +541,7 @@ def generate_ribs_centroids(image, threshold_lung, threshold_cort, gen_images=[F
     
     # Generate labelled groups of objects
     # Dilate the ribs to (relatively) quickly establish connectivity, then label
-    dilated_rib_centroids = ndimage.binary_dilation(binary_image, iterations=3).astype(binary_image.dtype)
+    dilated_rib_centroids = ndimage.binary_dilation(binary_image, iterations=4).astype(binary_image.dtype)
     labels = skimage.measure.label(dilated_rib_centroids)
     # Apply labels to original (i.e. un-dilated) centroids
     labels = np.multiply(labels, binary_image)
@@ -535,7 +550,7 @@ def generate_ribs_centroids(image, threshold_lung, threshold_cort, gen_images=[F
     # Remove labels with few occurences
     vals, counts = size_of_labels(labels, bg=0)
     for i in range(len(vals)):
-        if counts[i] < 20:
+        if counts[i] < int(20/624*lungs_span[0]):  # 20/624 based on AGING001
             labels[labels == vals[i]] = 0
 
     # Reset the label numbers
@@ -580,15 +595,6 @@ def save_as_sparse(mat, fname):
     ##print("Plotted:")
     ##toc()
     #plt.show()
-    
-    # centroid of lungs
-    # ... use to eliminate sternum
-    # ... use to order ribs
-    
-    # eg. method to identify ribs
-    # array of centroid groups that correspond to each rib
-    # [[L1], [L2], ..., [L12], [R1], [R2], ..., [R12]]
-    # [[1, 5], [2, 3, 8], ..., [], [2], [4, 7], ..., [40]]
 
 
 
@@ -609,7 +615,7 @@ print("\n")
 for i in range(np.shape(input_list)[0]):
     if input_list[i, 0] == 1:
         run_ribs_segmentation(input_list[i, 1:5], root, path_nifti, save_results=True,
-                               troubleshooting_images=[True, False])
+                               troubleshooting_images=[False, False])
         # check_masks(cohort, subject, condition, root)
 print("\n")
 
