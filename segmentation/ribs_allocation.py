@@ -15,8 +15,9 @@ def run_ribs_allocation(input_info, root, path_nifti, save_masks=True, troublesh
     ribs_image = load_sparse('Rib_Labels/ribs_segmented_'+subject+'_'+condition+'.pkl')
     
     # Plot for allocation
-    print("Plotting... "+subject)
+    print("\tPlotting... "+subject, end="\r")
     plot_labelled_image(ribs_image)
+    print("\tPlotting... "+subject+"\tDone.")
     
 
 def size_of_labels(im, bg=-1):
@@ -33,7 +34,7 @@ def size_of_labels(im, bg=-1):
 def plot_labelled_image(im):
 
     unique_labels = np.unique(im)[1:]
-    print("Plot labels:\n", unique_labels)
+    #print("\t\t(number of labels: "+str(len(unique_labels))+")")
 
     # plot in 3d
     plt.close('all')

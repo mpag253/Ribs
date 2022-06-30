@@ -24,8 +24,9 @@ def run_ribs_consolidation(input_info, allocation_dict, root, path_nifti, save_m
     save_as_sparse(ribs_consolidated, 'Rib_Labels/ribs_labelled_'+subject+'_'+condition+'.pkl')
     
     # Plot to check consolidation
-    print("Plotting... "+subject)
+    print("\tPlotting... "+subject, end="\r")
     plot_labelled_image(ribs_consolidated)
+    print("\tPlotting... "+subject+"\tDone.")
     
     # Get end points of each rib
     #rib_points = get_rib_points(ribs_consolidated)
@@ -45,7 +46,6 @@ def load_allocation_dict():
     dct = {}
     
     data = input_list = np.array(pd.read_excel("/hpc/mpag253/Ribs/segmentation/ribs_data_for_allocation.xlsx", skiprows=0, usecols=range(15)))
-    print(data,"\n")
     
     # Define the allocation lists
     # specifies which bodies in the above plot are allocated to which rib
@@ -130,7 +130,7 @@ def retrieve_allocation_list(subject):
 def plot_labelled_image(im):
 
     unique_labels = np.unique(im)[1:]
-    print("Plot labels: ", unique_labels)
+    #print("Plot labels: ", unique_labels)
 
     # plot in 3d
     plt.close('all')
