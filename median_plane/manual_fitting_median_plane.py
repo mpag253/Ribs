@@ -37,7 +37,8 @@ def run_median_segmentation(input_info, image_info, plane_points, root, rib_labe
     print("\tRunning median fitting...\t", subject, end="\r")
 
     # Load the labelled ribs image
-    im = load_sparse(rib_label_dir+'/ribs_labelled_'+subject+'_'+condition+'.pkl')
+    #im = load_sparse(rib_label_dir+'/ribs_labelled_'+subject+'_'+condition+'.pkl')
+    im = load_sparse(rib_label_dir+'/ribs_segmented_'+subject+'_'+condition+'.pkl')
     
     # Fit plane
     plane = fit_median_plane(plane_points, image_info, im)
@@ -159,7 +160,7 @@ def plot_im(plane, coords, label_coords):
     unique_labels = np.unique(label_coords[:, 0])
     colours = plt.cm.rainbow(np.linspace(0, 1, 24)) 
     for label in unique_labels: 
-        col = colours[ int((label-1) - (label%2-1)*11 - (label>12)*11) ] # just splitting up colours for contrast
+        col = colours[0] #colours[ int((label-1) - (label%2-1)*11 - (label>12)*11) ] # just splitting up colours for contrast
         col[3] = 0.5
         label_indices = label_coords[:, 0]==label
         label_pts = label_coords[label_indices, 2:5]

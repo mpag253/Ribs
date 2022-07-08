@@ -77,10 +77,7 @@ def run_median_segmentation(input_info, image_info, root, path_nifti, save_resul
     elif len(os.listdir(path_dicom_specific) ) == 0:
         print("\tRunning median segmentation...\t", subject, "\tFailed. Directory is empty: ", path_dicom_specific)
     else:
-        path_output = os.path.join(root, cohort, subject, condition, "Median")
         path_nifti_specific = os.path.join(path_nifti, cohort, subject, condition, "Torso", subject + ".nii")
-        if not os.path.exists(path_output):
-            os.makedirs(path_output)
                
         # If nifti doesn't already exist, convert dicom to nifti and load the nifti
         if not os.path.isfile(path_nifti_specific):

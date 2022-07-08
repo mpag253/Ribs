@@ -2,7 +2,7 @@
 import os
 import nibabel as nib
 import numpy as np
-#import dicom2nifti
+import dicom2nifti
 import matplotlib.pyplot as plt
 #from PIL import Image
 import skimage
@@ -77,10 +77,7 @@ def run_ribs_segmentation(input_info, root, path_nifti, save_results=True, troub
     elif len(os.listdir(path_dicom_specific) ) == 0:
         print("\tRunning torso segmentation...\t", subject, "\tFailed. Directory is empty: ", path_dicom_specific)
     else:
-        path_output = os.path.join(root, cohort, subject, condition, "Ribs")
         path_nifti_specific = os.path.join(path_nifti, cohort, subject, condition, "Torso", subject + ".nii")
-        if not os.path.exists(path_output):
-            os.makedirs(path_output)
                
         # If nifti doesn't already exist, convert dicom to nifti and load the nifti
         if not os.path.isfile(path_nifti_specific):
@@ -152,7 +149,7 @@ def convert_dicoms(subject, cohort, dicom_path, nifti_path):
         # Disable the validation of the slice increment.
         # This allows for converting data where the slice increment is not consistent.
         # USE WITH CAUTION!
-        # dicom2nifti.settings.disable_validate_slice_increment()
+        #dicom2nifti.settings.disable_validate_slice_increment()
 
         try:
             dicom2nifti.dicom_series_to_nifti(dicom_path, nifti_path, reorient_nifti=True)   # changed to true
@@ -495,14 +492,14 @@ def segment_ribs(image, rib_region, threshold=600, gen_images=[False, False]):
 ###   
 def generate_ribs_centroids(image, threshold_lung, threshold_cort, gen_images=[False, False]):
   
-    #
-    # To generate ribs images for all slices...
-    for i in range(np.shape(image)[2]):
-        if i%1 == 0:
-            generate_img_fig(image[:, :, i], "images/axial_lowres_"+"{:03d}".format(i), "slice image", True)
-            plt.close('all')
-    #
-    #
+    ##
+    ## To generate ribs images for all slices...
+    #for i in range(np.shape(image)[2]):
+    #    if i%1 == 0:
+    #        generate_img_fig(image[:, :, i], "images/axial_lowres_"+"{:03d}".format(i), "slice image", True)
+    #        plt.close('all')
+    ##
+    ##
     
     # Generate lung segmentation and extract measures of the lung
     tic()
