@@ -1,0 +1,251 @@
+ Group name: ribs
+ Shape.  Dimension=1
+ #Scale factor sets=1
+   l.Lagrange, #Scale factors= 2
+ #Nodes= 2
+ #Fields= 1
+ 1) coordinates, coordinate, rectangular cartesian, #Components=3
+   x.  l.Lagrange, no modify, standard node based.
+     #Nodes= 2
+      1.  #Values=1
+       Value indices:      1 
+       Scale factor indices:   1
+      2.  #Values=1
+       Value indices:      1 
+       Scale factor indices:   2
+   y.  l.Lagrange, no modify, standard node based.
+     #Nodes= 2
+      1.  #Values=1
+       Value indices:      1 
+       Scale factor indices:   1
+      2.  #Values=1
+       Value indices:      1 
+       Scale factor indices:   2
+   z.  l.Lagrange, no modify, standard node based.
+     #Nodes= 2
+      1.  #Values=1
+       Value indices:      1 
+       Scale factor indices:   1
+      2.  #Values=1
+       Value indices:      1 
+       Scale factor indices:   2
+ Element:            1 0 0
+   Nodes:
+                1            2
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:            2 0 0
+   Nodes:
+                2            3
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:            3 0 0
+   Nodes:
+                4            5
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:            4 0 0
+   Nodes:
+                5            6
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:            5 0 0
+   Nodes:
+                7            8
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:            6 0 0
+   Nodes:
+                8            9
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:            7 0 0
+   Nodes:
+               10           11
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:            8 0 0
+   Nodes:
+               11           12
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:            9 0 0
+   Nodes:
+               13           14
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           10 0 0
+   Nodes:
+               14           15
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           11 0 0
+   Nodes:
+               16           17
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           12 0 0
+   Nodes:
+               17           18
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           13 0 0
+   Nodes:
+               19           20
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           14 0 0
+   Nodes:
+               20           21
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           15 0 0
+   Nodes:
+               22           23
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           16 0 0
+   Nodes:
+               23           24
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           17 0 0
+   Nodes:
+               25           26
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           18 0 0
+   Nodes:
+               26           27
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           19 0 0
+   Nodes:
+               28           29
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           20 0 0
+   Nodes:
+               29           30
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           21 0 0
+   Nodes:
+               31           32
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           22 0 0
+   Nodes:
+               32           33
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           23 0 0
+   Nodes:
+               34           35
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           24 0 0
+   Nodes:
+               35           36
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           25 0 0
+   Nodes:
+               37           38
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           26 0 0
+   Nodes:
+               38           39
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           27 0 0
+   Nodes:
+               40           41
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           28 0 0
+   Nodes:
+               41           42
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           29 0 0
+   Nodes:
+               43           44
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           30 0 0
+   Nodes:
+               44           45
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           31 0 0
+   Nodes:
+               46           47
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           32 0 0
+   Nodes:
+               47           48
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           33 0 0
+   Nodes:
+               49           50
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           34 0 0
+   Nodes:
+               50           51
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           35 0 0
+   Nodes:
+               52           53
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           36 0 0
+   Nodes:
+               53           54
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           37 0 0
+   Nodes:
+               55           56
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           38 0 0
+   Nodes:
+               56           57
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           39 0 0
+   Nodes:
+               58           59
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           40 0 0
+   Nodes:
+               59           60
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           41 0 0
+   Nodes:
+               61           62
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           42 0 0
+   Nodes:
+               63           64
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           43 0 0
+   Nodes:
+               65           66
+   Scale factors:
+      0.10000E+01  0.10000E+01
+ Element:           44 0 0
+   Nodes:
+               67           68
+   Scale factors:
+      0.10000E+01  0.10000E+01

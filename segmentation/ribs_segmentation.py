@@ -554,7 +554,7 @@ def generate_ribs_centroids(image, threshold_lung, threshold_cort, gen_images=[F
     #toc(text="Combined and labelled:")
 
     # Remove labels with few occurences
-    minimum_group_size = 1 #int(20/624*lungs_span[0]) # 20/624 based on AGING001 EIsupine
+    minimum_group_size = int(20/624*lungs_span[0]) # 20/624 based on AGING001 EIsupine
     vals, counts = size_of_labels(labels, bg=0)
     for i in range(len(vals)):
         if counts[i] < minimum_group_size:  
